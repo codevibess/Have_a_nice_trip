@@ -11,6 +11,7 @@ updater = Updater(TELEGRAM_TOKEN)
 job_q = updater.job_queue
 
 
+
 def hello(bot, update):
     update.message.reply_text(
         'Hello {}'.format(update.message.from_user.first_name))

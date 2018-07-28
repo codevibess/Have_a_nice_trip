@@ -1,4 +1,5 @@
 from helpers.date_converter import *
+from model.model import  *
 from config import *
 import urllib.request
 import requests
@@ -102,6 +103,7 @@ def get_data_by_default_parameters():
     sort_useful_data()
     print(sorted_data)
     check_flights(booking_tokens[0])
+    db.child("tripsletter").push(sorted_data)
 
 
 def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="", passengers="2",
@@ -122,9 +124,10 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     sort_useful_data()
     print(sorted_data)
     check_flights(booking_tokens[0])
+    db.child("users_search").push(sorted_data)
 
 
-# www.kiwi.com/deep?flyFrom=krakow&price_from=0&price_to=60&typeFlight=return&daysInDestinationFrom=2&daysInDestinationTo=4
-# www.kiwi.com/deep?departure=2018-10-24&return=2-4&from=KRK&to=GDN&partner=picky
-# get_data_by_default_parameters()
-init_search_parameters("kiev")
+
+
+get_data_by_default_parameters()
+init_search_parameters('kiev')

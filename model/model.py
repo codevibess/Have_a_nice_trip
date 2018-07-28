@@ -10,6 +10,3 @@ config = {
 
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
-db.child("users").child("Morty")
-data = {"name": "Mortimer 'Morty' Smith"}
-db.child("users").push(data)
