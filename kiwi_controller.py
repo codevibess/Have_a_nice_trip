@@ -4,7 +4,6 @@ import urllib.request
 import requests
 import json
 
-
 #  script variables
 data_from_kiwi_url = {}
 all_flights = []
@@ -13,6 +12,7 @@ sorted_data = []
 #  variable needed for search in api
 fly_from = 'kiev'
 fly_to = ''
+number_of_passengers = '2'
 date_from = ''
 date_to = ''
 days_in_destination_from = '2'
@@ -27,9 +27,6 @@ def create_link(city_from, city_to, date):
     link = NODEEP + f"{city_from}/{city_to}/{date}/2-4"
     print(link)
     return link
-
-
-
 
 
 #  in this function we do get request and
@@ -107,18 +104,25 @@ def get_data_by_default_parameters():
     check_flights(booking_tokens[0])
 
 
-def init_search_parameters(dly_from, fly_to, date_from, passengers, date_to, days_in_destination_from,
-                           days_in_destination_to, price_to):
-    fly_from = 'kiev'
-    fly_to = ''
-    date_from = ''
-    date_to = ''
-    days_in_destination_from = '2'
-    days_in_destination_to = '4'
-    price_from = '0'
-    price_to = '60'
+def init_search_parameters(city_from="krakow", city_to="", date_f="",date_t="", passengers="2",  days_in_destination_f='2',
+                           days_in_destination_t='4', price_t='60'):
+    global fly_from, fly_to, number_of_passengers
+    global date_from, date_to
+    global days_in_destination_from, days_in_destination_to, price_to
+    fly_from = city_from
+    fly_to = city_to
+    number_of_passengers = passengers
+    date_from = date_f
+    date_to = date_t
+    days_in_destination_from = days_in_destination_f
+    days_in_destination_to = days_in_destination_t
+    price_to = price_t
 
 
 # www.kiwi.com/deep?flyFrom=krakow&price_from=0&price_to=60&typeFlight=return&daysInDestinationFrom=2&daysInDestinationTo=4
 # www.kiwi.com/deep?departure=2018-10-24&return=2-4&from=KRK&to=GDN&partner=picky
-get_data_by_default_parameters()
+# get_data_by_default_parameters()
+init_search_parameters()
+print(number_of_passengers)
+print(fly_from)
+
