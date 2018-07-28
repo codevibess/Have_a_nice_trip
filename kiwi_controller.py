@@ -1,4 +1,5 @@
 from helpers.date_converter import *
+from helpers.countries_link_normalization import *
 from model.model import  *
 from config import *
 import urllib.request
@@ -72,10 +73,8 @@ def sort_useful_data():
             'price': all_flights[counter]['conversion']['EUR'],
             'booking_token': all_flights[counter]['booking_token'],
             "link": create_link(
-                all_flights[counter]['mapIdfrom'] + "-" + all_flights[counter]['countryFrom']['name'].lower().replace(
-                    " ", "-"),
-                all_flights[counter]['mapIdto'] + "-" + all_flights[counter]['countryTo']['name'].lower().replace(" ",
-                                                                                                                  "-"),
+                all_flights[counter]['mapIdfrom'] + "-" + normalise(all_flights[counter]['countryFrom']['name']),
+                all_flights[counter]['mapIdto'] + "-" + normalise(all_flights[counter]['countryTo']['name']),
                 convert_date_to_UTC(all_flights[counter]['route'][0]['dTime']))
         }
         booking_tokens.append(all_flights[counter]['booking_token'])
