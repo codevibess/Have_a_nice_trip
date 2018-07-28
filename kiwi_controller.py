@@ -1,8 +1,9 @@
+from helpers.date_converter import *
 from config import *
 import urllib.request
 import requests
 import json
-import datetime
+
 
 #  script variables
 data_from_kiwi_url = {}
@@ -28,11 +29,7 @@ def create_link(city_from, city_to, date):
     return link
 
 
-#  this function convert date form UNIX format to UTC
-def convert_date_to_UTC(date):
-    return datetime.datetime.fromtimestamp(
-        int(date)
-    ).strftime('%Y-%m-%d')
+
 
 
 #  in this function we do get request and
@@ -48,12 +45,12 @@ def get_data_from_kiwi_url():
                             f"&price_to={price_to}"
     ) as url:
         print(SEARCH_ENGINE + f"?flyFrom={fly_from}"
-                            f"&to={fly_to}"
-                            f"&typeFlight=return"
-                            f"&daysInDestinationFrom={days_in_destination_from}"
-                            f"&daysInDestinationTo={days_in_destination_to}"
-                            f"&price_from={price_from}"
-                            f"&price_to={price_to}")
+                              f"&to={fly_to}"
+                              f"&typeFlight=return"
+                              f"&daysInDestinationFrom={days_in_destination_from}"
+                              f"&daysInDestinationTo={days_in_destination_to}"
+                              f"&price_from={price_from}"
+                              f"&price_to={price_to}")
         global data_from_kiwi_url
         global all_flights
         data_from_kiwi_url = json.loads(url.read().decode())
@@ -102,11 +99,26 @@ def check_flights(booking_token):
     invalid = response['flights_invalid']
     return checked, invalid
 
+
 def get_data_by_default_parameters():
     get_data_from_kiwi_url()
     sort_useful_data()
     print(sorted_data)
     check_flights(booking_tokens[0])
+
+
+def init_search_parameters(dly_from, fly_to, date_from, passengers, date_to, days_in_destination_from,
+                           days_in_destination_to, price_to):
+    fly_from = 'kiev'
+    fly_to = ''
+    date_from = ''
+    date_to = ''
+    days_in_destination_from = '2'
+    days_in_destination_to = '4'
+    price_from = '0'
+    price_to = '60'
+
+
 # www.kiwi.com/deep?flyFrom=krakow&price_from=0&price_to=60&typeFlight=return&daysInDestinationFrom=2&daysInDestinationTo=4
 # www.kiwi.com/deep?departure=2018-10-24&return=2-4&from=KRK&to=GDN&partner=picky
 get_data_by_default_parameters()
