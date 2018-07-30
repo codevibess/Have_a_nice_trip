@@ -5,7 +5,7 @@ from config import *
 import urllib.request
 import requests
 import json
-
+from mock_data import *
 #  script variables
 data_from_kiwi_url = {}
 all_flights = []
@@ -27,7 +27,6 @@ booking_tokens = []
 
 def create_link(city_from, city_to, date):
     link = NODEEP + f"{city_from}/{city_to}/{date}/2-4"
-    print(link)
     return link
 
 
@@ -43,6 +42,7 @@ def get_data_from_kiwi_url():
                             f"&price_from={price_from}"
                             f"&price_to={price_to}"
     ) as url:
+
         global data_from_kiwi_url
         global all_flights
         data_from_kiwi_url = json.loads(url.read().decode())
@@ -52,7 +52,6 @@ def get_data_from_kiwi_url():
 def sort_useful_data():
     global convert_date
     for counter, key in enumerate(range(0, len(all_flights))):
-        print(key)
         single_trip = {
             'cityFrom': all_flights[counter]['route'][0]['cityFrom'],
             'countryFrom': all_flights[counter]['countryFrom'],
@@ -122,23 +121,25 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
 
 def get_data_from_db():
     all_searches = db.child("users_search").get()
+    result = []
     for user in all_searches.each():
-        print(user.val())
-
+        result.append(user.val())
+    return result
 
 def unpack_data(arg):
-    # global sorted_data
-
+    sorted_data = arg
     data_for_telegram = ""
-    for count, trip in enumerate(range(39,len(sorted_data))):
-        data_for_telegram += f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFrom']} - {sorted_data[count]['cityTo']}</a>   ''' \
+    lista = []
+    for count, trip in enumerate(sorted_data):
+        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFrom']} - {sorted_data[count]['cityTo']}</a>   ''' \
                              f''' Price: {sorted_data[count]['price']} \n''' \
                              f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
+        lista.append(data_for_telegram)
+    return lista
 
-    return data_for_telegram
 
-
-# get_data_by_default_parameters()
+x = get_data_by_default_parameters()
+print(x[:10])
 # init_search_parameters('kiev')
 
-get_data_from_db()
+
