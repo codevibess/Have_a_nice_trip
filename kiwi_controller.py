@@ -1,6 +1,6 @@
 from helpers.date_converter import *
 from helpers.countries_link_normalization import *
-from model.model import  *
+from model.model import *
 from config import *
 import urllib.request
 import requests
@@ -12,7 +12,7 @@ all_flights = []
 sorted_data = []
 
 #  variable needed for search in api
-fly_from = 'kiev'
+fly_from = 'krakow'
 fly_to = ''
 number_of_passengers = '2'
 date_from = ''
@@ -43,13 +43,6 @@ def get_data_from_kiwi_url():
                             f"&price_from={price_from}"
                             f"&price_to={price_to}"
     ) as url:
-        print(SEARCH_ENGINE + f"?flyFrom={fly_from}"
-                              f"&to={fly_to}"
-                              f"&typeFlight=return"
-                              f"&daysInDestinationFrom={days_in_destination_from}"
-                              f"&daysInDestinationTo={days_in_destination_to}"
-                              f"&price_from={price_from}"
-                              f"&price_to={price_to}")
         global data_from_kiwi_url
         global all_flights
         data_from_kiwi_url = json.loads(url.read().decode())
@@ -103,6 +96,7 @@ def get_data_by_default_parameters():
     print(sorted_data)
     check_flights(booking_tokens[0])
     db.child("tripsletter").push(sorted_data)
+    return unpack_data(sorted_data)
 
 
 def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="", passengers="2",
@@ -126,7 +120,25 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     db.child("users_search").push(sorted_data)
 
 
+def get_data_from_db():
+    all_searches = db.child("users_search").get()
+    for user in all_searches.each():
+        print(user.val())
 
 
-get_data_by_default_parameters()
-init_search_parameters('kiev')
+def unpack_data(arg):
+    # global sorted_data
+
+    data_for_telegram = ""
+    for count, trip in enumerate(range(39,len(sorted_data))):
+        data_for_telegram += f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFrom']} - {sorted_data[count]['cityTo']}</a>   ''' \
+                             f''' Price: {sorted_data[count]['price']} \n''' \
+                             f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
+
+    return data_for_telegram
+
+
+# get_data_by_default_parameters()
+# init_search_parameters('kiev')
+
+get_data_from_db()
