@@ -5,7 +5,7 @@ from config import *
 import urllib.request
 import requests
 import json
-from mock_data import *
+
 #  script variables
 data_from_kiwi_url = {}
 all_flights = []
@@ -42,6 +42,13 @@ def get_data_from_kiwi_url():
                             f"&price_from={price_from}"
                             f"&price_to={price_to}"
     ) as url:
+        print( SEARCH_ENGINE + f"?flyFrom={fly_from}"
+                            f"&to={fly_to}"
+                            f"&typeFlight=return"
+                            f"&daysInDestinationFrom={days_in_destination_from}"
+                            f"&daysInDestinationTo={days_in_destination_to}"
+                            f"&price_from={price_from}"
+                            f"&price_to={price_to}")
 
         global data_from_kiwi_url
         global all_flights
@@ -101,6 +108,7 @@ def get_data_by_default_parameters():
 def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="", passengers="2",
                            days_in_destination_f='2',
                            days_in_destination_t='4', price_t='60'):
+    ''' Function which init global parameters for user search '''
     global fly_from, fly_to, number_of_passengers
     global date_from, date_to
     global days_in_destination_from, days_in_destination_to, price_to
@@ -115,7 +123,9 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     get_data_from_kiwi_url()
     sort_useful_data()
     print(sorted_data)
+    # call check flights for more information about single flight ex. number of seats, bags fee
     check_flights(booking_tokens[0])
+    # put into firebase data
     db.child("users_search").push(sorted_data)
 
 
@@ -128,18 +138,18 @@ def get_data_from_db():
 
 def unpack_data(arg):
     sorted_data = arg
-    data_for_telegram = ""
-    lista = []
+    list_of_flights = []
     for count, trip in enumerate(sorted_data):
         data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFrom']} - {sorted_data[count]['cityTo']}</a>   ''' \
                              f''' Price: {sorted_data[count]['price']} \n''' \
                              f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
-        lista.append(data_for_telegram)
-    return lista
+        list_of_flights.append(data_for_telegram)
+    return list_of_flights
 
 
-x = get_data_by_default_parameters()
-print(x[:10])
+# x = get_data_by_default_parameters()
+# y = init_search_parameters('krakow', 'gdansk')
+# print(y)
 # init_search_parameters('kiev')
 
 
