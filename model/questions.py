@@ -1,0 +1,1 @@
+questions = ['city', 'city_to', 'data_f', 'data_t', 'passengers']

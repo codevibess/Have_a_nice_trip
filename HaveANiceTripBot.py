@@ -4,6 +4,7 @@ from telegram.ext import Filters
 from telegram.ext import MessageHandler
 # import my controller script and additional packadfe for logging to console
 from kiwi_controller import *
+from model.questions import *
 import logging
 
 #  log into console - very helpful  stuff
@@ -12,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 # variable question needed for iteraction with a user & give additional
 # info how to search throw bot
-questions = ['city', 'city_to', 'data_f', 'data_t', 'passengers']
+
 parameters_for_user_search = []
 
 # staff needed for start bot and register in telegram bot system
