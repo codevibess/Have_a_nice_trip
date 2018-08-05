@@ -27,29 +27,29 @@ job_q = updater.job_queue
 # functions
 
 
-def give_a_questions():
+def get_a_single_question():
     yield from questions
 
 
-q = give_a_questions()
+single_question = get_a_single_question()
 
 
-def custom(bot, update):
-    global q
+def iterate_through_questions(bot, update):
+    global single_question
     try:
-        question = next(q)
+        question = next(single_question)
     except:
-        q = give_a_questions()
+        single_question = get_a_single_question()
         print("-------------------" + str(parameters_for_user_search))
         # init_search_parameters(parameters_for_user_search[1],parameters_for_user_search[2])
-        parameters_for_user_search.clear() # empty list for futher use
+        parameters_for_user_search.clear()  # empty list for futher use
         return
     return question
 
 
 def search(bot, update):
     parameters_for_user_search.append(update.message.text)
-    message_for_user = custom(bot, update)
+    message_for_user = iterate_through_questions(bot, update)
     try:
         bot.send_message(chat_id=CHAT_ID,
                          text=message_for_user)
