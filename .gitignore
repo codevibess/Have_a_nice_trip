@@ -1,4 +1,5 @@
-config.py
 .idea
 __pycache__
 venv
+config.py
+SEARCH_ENGINE
