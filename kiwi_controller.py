@@ -124,7 +124,7 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     sort_useful_data()
     print(sorted_data)
     # call check flights for more information about single flight ex. number of seats, bags fee
-    check_flights(booking_tokens[0])
+
     # put into firebase data
     db.child("users_search").push(sorted_data)
 

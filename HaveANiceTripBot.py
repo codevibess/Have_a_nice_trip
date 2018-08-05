@@ -26,17 +26,38 @@ def give_a_questions():
 q = give_a_questions()
 
 
-def search(bot, update):
+def custom(bot, update):
     global q
     try:
         question = next(q)
-        values.append(update.message.text)
+
     except:
         q = give_a_questions()
         print("-------------------" + str(values))
+        init_search_parameters(values[1],values[2])
         return
-    bot.send_message(chat_id=CHAT_ID,
-                     text=question)
+    return question
+
+
+def search(bot, update):
+    values.append(update.message.text)
+    x = custom(bot, update)
+
+    try:
+        bot.send_message(chat_id=CHAT_ID,
+                         text="ss" + x)
+    except:
+        return
+
+
+def handle_search(bot, update):
+    """Here we set handler to all text masseges and for invoke
+    search command """
+    handler = MessageHandler(Filters.text | Filters.command, search)
+    updater.dispatcher.add_handler(handler)
+    search(bot, update)
+    # ставим обработчик всех текстовых сообщений
+    # search(bot, update)
 
 
 def send_updates_for_users(bot, job):
@@ -54,11 +75,9 @@ def send_updates_for_users(bot, job):
                              text=x)
 
 
-handler = MessageHandler(Filters.text | Filters.command, search)
-updater.dispatcher.add_handler(handler)  # ставим обработчик всех текстовых сообщений
-updater.dispatcher.add_handler(CommandHandler('search', search))
+updater.dispatcher.add_handler(CommandHandler('search', handle_search))
 
-my_updates_sender = job_q.run_repeating(search, interval=90, first=0)
+# my_updates_sender = job_q.run_repeating(search, interval=90, first=0)
 
 updater.start_polling()
 updater.idle()
