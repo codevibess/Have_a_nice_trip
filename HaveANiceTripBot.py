@@ -7,7 +7,7 @@ from kiwi_controller import *
 from model.questions import *
 import logging
 
-#  log into console - very helpful  stuff
+ # log into console - very helpful  stuff
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -39,8 +39,11 @@ single_question = get_a_single_question()
 def iterate_through_questions(bot, update):
     global single_question
     global result_of_search
+
+
     try:
         question = next(single_question)
+
     except:
         single_question = get_a_single_question()
         print("-------------------" + str(parameters_for_user_search))
@@ -48,7 +51,8 @@ def iterate_through_questions(bot, update):
         result_of_search = init_search_parameters(parameters_for_user_search[1],parameters_for_user_search[2])
         print(result_of_search)
         send_updates_for_users(bot, update)
-
+        parameters_for_user_search.clear()  # empty list for futher use
+        result_of_search.clear()
         return
     return question
 
@@ -70,7 +74,9 @@ def handle_search(bot, update):
     search command """
     handler = MessageHandler(Filters.text | Filters.command, search)
     updater.dispatcher.add_handler(handler)
+    # updater.dispatcher.remove_handler(handler)
     search(bot, update)
+
 
 
 
@@ -87,8 +93,11 @@ def send_updates_for_users(bot, job):
         else:
             bot.send_message(parse_mode='HTML', chat_id=CHAT_ID,
                              text=result_of_search)
-    parameters_for_user_search.clear()  # empty list for futher use
-    result_of_search.clear()
+
+
+
+
+
 
 
 updater.dispatcher.add_handler(CommandHandler('search', handle_search))

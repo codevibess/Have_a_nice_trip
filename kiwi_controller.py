@@ -143,7 +143,7 @@ def unpack_data(arg):
     sorted_data = arg
     list_of_flights = []
     for count, trip in enumerate(sorted_data):
-        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>   ''' \
+        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>  sssssssssssssssssssssss ''' \
                              f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
                              f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
