@@ -74,7 +74,9 @@ def sort_useful_data():
             "link": create_link(
                 all_flights[counter]['mapIdfrom'] + "-" + normalise(all_flights[counter]['countryFrom']['name']),
                 all_flights[counter]['mapIdto'] + "-" + normalise(all_flights[counter]['countryTo']['name']),
-                convert_date_to_UTC(all_flights[counter]['route'][0]['dTime']))
+                convert_date_to_UTC(all_flights[counter]['route'][0]['dTime'])),
+            "cityFromFullName": all_flights[counter]['cityFrom'],
+            "cityToFullName": all_flights[counter]['cityTo']
         }
         booking_tokens.append(all_flights[counter]['booking_token'])
         sorted_data.append(single_trip)
@@ -141,7 +143,7 @@ def unpack_data(arg):
     sorted_data = arg
     list_of_flights = []
     for count, trip in enumerate(sorted_data):
-        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFrom']} - {sorted_data[count]['cityTo']}</a>   ''' \
+        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>   ''' \
                              f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
                              f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
