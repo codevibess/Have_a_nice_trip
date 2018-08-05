@@ -39,6 +39,14 @@ class TelegramBot():
         self.updater.idle()
     # functions
 
+    def create_handler_for_search(self):
+        self.handler = MessageHandler(Filters.text | Filters.command, self.search)
+        self.updater.dispatcher.add_handler(self.handler)
+
+    def delete_search_handler(self):
+        self.updater.dispatcher.remove_handler(self.handler)
+
+
     def get_a_single_question(self):
         yield from self.questions
 
@@ -57,8 +65,12 @@ class TelegramBot():
             self.result_of_search = init_search_parameters(self.parameters_for_user_search[1], self.parameters_for_user_search[2])
             print(self.result_of_search)
             self.send_updates_for_users(bot, update)
+            self.result_of_search.clear()
             self.parameters_for_user_search.clear()  # empty list for futher use
-            # result_of_search.clear()
+            self.single_question = self.get_a_single_question()
+            self.delete_search_handler()
+
+            print("dsdssd" + " ".join(self.result_of_search))
             return
         return question
 
@@ -74,8 +86,7 @@ class TelegramBot():
     def handle_search(self, bot, update):
         """Here we set handler to all text masseges and for invoke
         search command """
-        handler = MessageHandler(Filters.text | Filters.command, self.search)
-        self.updater.dispatcher.add_handler(handler)
+        self.create_handler_for_search()
         # updater.dispatcher.remove_handler(handler)
         self.search(bot, update)
 
@@ -96,8 +107,7 @@ class TelegramBot():
 
 # my_updates_sender = job_q.run_repeating(search, interval=90, first=0)
 
-# updater.start_polling()
-# updater.idle()
+
 if __name__ == "__main__":
     t = TelegramBot()
     t.start()
