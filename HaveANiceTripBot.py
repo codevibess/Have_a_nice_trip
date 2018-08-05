@@ -11,10 +11,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-# variable question needed for iteraction with a user & give additional
-# info how to search throw bot
 
-parameters_for_user_search = []
 
 # staff needed for start bot and register in telegram bot system
 updater = Updater(TELEGRAM_TOKEN)
@@ -23,7 +20,11 @@ updater = Updater(TELEGRAM_TOKEN)
 # e.t.c . It runs asynchronously in a separate thread.
 job_q = updater.job_queue
 
+# variable question needed for iteraction with a user & give additional
+# info how to search throw bot
 
+parameters_for_user_search = []
+result_of_search = []
 
 # functions
 
@@ -37,13 +38,17 @@ single_question = get_a_single_question()
 
 def iterate_through_questions(bot, update):
     global single_question
+    global result_of_search
     try:
         question = next(single_question)
     except:
         single_question = get_a_single_question()
         print("-------------------" + str(parameters_for_user_search))
-        # init_search_parameters(parameters_for_user_search[1],parameters_for_user_search[2])
-        parameters_for_user_search.clear()  # empty list for futher use
+        # result_of_search = unpack_data(init_search_parameters(parameters_for_user_search[1],parameters_for_user_search[2]))
+        result_of_search = init_search_parameters(parameters_for_user_search[1],parameters_for_user_search[2])
+        print(result_of_search)
+        send_updates_for_users(bot, update)
+
         return
     return question
 
@@ -70,18 +75,20 @@ def handle_search(bot, update):
 
 
 def send_updates_for_users(bot, job):
-    global x
+    global result_of_search
     couter = 25
     prev_counter = 0
-    for it in range(0, int(len(x) / couter) + 1):
-        if len(x) >= 25:
+    for it in range(0, int(len(result_of_search) / couter) + 1):
+        if len(result_of_search) >= 25:
             bot.send_message(parse_mode='HTML', chat_id=CHAT_ID,
-                             text=f'''{''.join(x[prev_counter:couter])}''')
+                             text=f'''{''.join(result_of_search[prev_counter:couter])}''')
             prev_counter = couter
             couter *= 2
         else:
             bot.send_message(parse_mode='HTML', chat_id=CHAT_ID,
-                             text=x)
+                             text=result_of_search)
+    parameters_for_user_search.clear()  # empty list for futher use
+    result_of_search.clear()
 
 
 updater.dispatcher.add_handler(CommandHandler('search', handle_search))

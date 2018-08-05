@@ -60,9 +60,9 @@ def sort_useful_data():
     global convert_date
     for counter, key in enumerate(range(0, len(all_flights))):
         single_trip = {
-            'cityFrom': all_flights[counter]['route'][0]['cityFrom'],
+            'cityFrom': all_flights[counter]['mapIdfrom'],
             'countryFrom': all_flights[counter]['countryFrom'],
-            'cityTo': all_flights[counter]['route'][0]['cityTo'],
+            'cityTo': all_flights[counter]['mapIdto'],
             'countryTo': all_flights[counter]['countryTo'],
             'date': convert_date_to_UTC(all_flights[counter]['route'][0]['dTime']),
             'return_cityFrom': all_flights[counter]['route'][1]['cityFrom'],
@@ -122,11 +122,12 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     price_to = price_t
     get_data_from_kiwi_url()
     sort_useful_data()
-    print(sorted_data)
+    # print(sorted_data)
     # call check flights for more information about single flight ex. number of seats, bags fee
 
     # put into firebase data
     db.child("users_search").push(sorted_data)
+    return unpack_data(sorted_data)
 
 
 def get_data_from_db():
@@ -141,15 +142,16 @@ def unpack_data(arg):
     list_of_flights = []
     for count, trip in enumerate(sorted_data):
         data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFrom']} - {sorted_data[count]['cityTo']}</a>   ''' \
-                             f''' Price: {sorted_data[count]['price']} \n''' \
+                             f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
                              f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
+    print(list_of_flights)
     return list_of_flights
 
 
 # x = get_data_by_default_parameters()
 # y = init_search_parameters('krakow', 'gdansk')
 # print(y)
-# init_search_parameters('kiev')
+# init_search_parameters('krakow', 'berlin')
 
 
