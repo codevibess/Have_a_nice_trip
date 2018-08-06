@@ -11,15 +11,15 @@ import collections
 
 
 # log into console - very helpful  stuff
-# logging.basicConfig(level=logging.DEBUG,
-#                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 class TelegramBot():
     # variable question needed for iteraction with a user & give additional
     # info how to search throw bot
 
-    questions = ['city', 'city_to', 'data_f', 'data_t', 'passengers']
+    questions = ['Вкажіть пункт відправлення. Вживайте лише англійські назви міст (наприклад: kiev).', 'Тепер вкажіть місто прибуття Вживайте лише англійські назви міст (наприклад: kiev)..', 'data_f', 'data_t', 'passengers']
 
     def __init__(self):
         #  staff needed for start bot and register in telegram bot system
@@ -60,9 +60,12 @@ class TelegramBot():
             print("-------------------" + str(self.parameters_for_user_search))
 
             self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
-                                                           self.parameters_for_user_search[2])
+                                                           self.parameters_for_user_search[2],
+                                                           self.parameters_for_user_search[3],
+                                                           self.parameters_for_user_search[4],
+                                                           self.parameters_for_user_search[5]
+                                                           )
 
-            # print("-------------------" +  str(self.result_of_search))
             try:
                 self.send_updates_for_users(bot, update)
             except:
@@ -75,7 +78,8 @@ class TelegramBot():
         return question
 
     def search(self, bot, update):
-        self.parameters_for_user_search.append(update.message.text)
+        self.parameters_for_user_search.append("") if update.message.text == '-' else self.parameters_for_user_search.append(update.message.text)
+
         message_for_user = self.iterate_through_questions(bot, update)
         try:
             bot.send_message(chat_id=CHAT_ID,

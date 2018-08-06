@@ -22,6 +22,7 @@ days_in_destination_to = '4'
 price_from = '0'
 price_to = '52'
 
+
 booking_tokens = []
 
 
@@ -41,6 +42,8 @@ def get_data_from_kiwi_url():
                             f"&daysInDestinationTo={days_in_destination_to}"
                             f"&price_from={price_from}"
                             f"&price_to={price_to}"
+                            f"&dateFrom={date_from}"
+                            f"&dateTo={date_to}"
     ) as url:
         print(SEARCH_ENGINE + f"?flyFrom={fly_from}"
                               f"&to={fly_to}"
@@ -48,7 +51,9 @@ def get_data_from_kiwi_url():
                               f"&daysInDestinationFrom={days_in_destination_from}"
                               f"&daysInDestinationTo={days_in_destination_to}"
                               f"&price_from={price_from}"
-                              f"&price_to={price_to}")
+                              f"&price_to={price_to}"
+                              f"&price_from={price_from}"
+                              )
 
         global data_from_kiwi_url
         global all_flights
@@ -102,7 +107,8 @@ def get_data_by_default_parameters():
     get_data_from_kiwi_url()
     sort_useful_data()
     print(sorted_data)
-    check_flights(booking_tokens[0])
+
+    print(check_flights(booking_tokens[0]))
     db.child("tripsletter").push(sorted_data)
     return unpack_data(sorted_data)
 
@@ -126,7 +132,7 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     sort_useful_data()
     # print(sorted_data)
     # call check flights for more information about single flight ex. number of seats, bags fee
-
+    print(check_flights(booking_tokens[0]))
     # put into firebase data
     db.child("users_search").push(sorted_data)
     return unpack_data()
@@ -149,6 +155,6 @@ def unpack_data():
                             f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
                             f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
-    print(list_of_flights)
+    # print(list_of_flights)
     sorted_data.clear()
     return list_of_flights
