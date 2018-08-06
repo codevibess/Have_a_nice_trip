@@ -42,13 +42,13 @@ def get_data_from_kiwi_url():
                             f"&price_from={price_from}"
                             f"&price_to={price_to}"
     ) as url:
-        print( SEARCH_ENGINE + f"?flyFrom={fly_from}"
-                            f"&to={fly_to}"
-                            f"&typeFlight=return"
-                            f"&daysInDestinationFrom={days_in_destination_from}"
-                            f"&daysInDestinationTo={days_in_destination_to}"
-                            f"&price_from={price_from}"
-                            f"&price_to={price_to}")
+        print(SEARCH_ENGINE + f"?flyFrom={fly_from}"
+                              f"&to={fly_to}"
+                              f"&typeFlight=return"
+                              f"&daysInDestinationFrom={days_in_destination_from}"
+                              f"&daysInDestinationTo={days_in_destination_to}"
+                              f"&price_from={price_from}"
+                              f"&price_to={price_to}")
 
         global data_from_kiwi_url
         global all_flights
@@ -139,20 +139,16 @@ def get_data_from_db():
         result.append(user.val())
     return result
 
+
 def unpack_data():
     global sorted_data
 
     list_of_flights = []
     for count, trip in enumerate(sorted_data):
         data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>''' \
-                             f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
-                             f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
+                            f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
+                            f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
     print(list_of_flights)
     sorted_data.clear()
     return list_of_flights
-
-
-
-
-

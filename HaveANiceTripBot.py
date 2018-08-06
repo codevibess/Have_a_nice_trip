@@ -9,6 +9,7 @@ import logging
 
 import collections
 
+
 # log into console - very helpful  stuff
 # logging.basicConfig(level=logging.DEBUG,
 #                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -68,11 +69,8 @@ class TelegramBot():
                 print("____________________ERROR IN SEND MESSAGE____________________")
             finally:
                 self.result_of_search = []
-                self.parameters_for_user_search = [] # empty list for futher use
-                sorted_data = []
+                self.parameters_for_user_search = []  # empty list for futher use
                 self.delete_search_handler()
-
-            # print("00000000000000000000" + str(self.result_of_search))
             return
         return question
 
@@ -92,14 +90,6 @@ class TelegramBot():
         # updater.dispatcher.remove_handler(handler)
         self.search(bot, update)
 
-
-
-
-
-
-
-
-
     def send_updates_for_users(self, bot, job):
         couter = 25
         prev_counter = 0
@@ -112,10 +102,6 @@ class TelegramBot():
             else:
                 bot.send_message(parse_mode='HTML', chat_id=CHAT_ID,
                                  text=f'''{''.join(self.result_of_search[1:10])}''')
-
-
-
-
 
 
 # my_updates_sender = job_q.run_repeating(search, interval=90, first=0)
