@@ -109,7 +109,7 @@ def get_data_by_default_parameters():
 
 def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="", passengers="1",
                            days_in_destination_f='2',
-                           days_in_destination_t='4', price_t='45'):
+                           days_in_destination_t='4', price_t='60'):
     ''' Function which init global parameters for user search '''
     global fly_from, fly_to, number_of_passengers
     global date_from, date_to
@@ -140,20 +140,19 @@ def get_data_from_db():
     return result
 
 def unpack_data(arg):
-    sorted_data = arg
+    global sorted_data
+    sorted_data1 = arg
     list_of_flights = []
-    for count, trip in enumerate(sorted_data):
-        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>''' \
-                             f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
-                             f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
+    for count, trip in enumerate(sorted_data1):
+        data_for_telegram = f''' <a href="{sorted_data1[count]['link']}">{sorted_data1[count]['cityFromFullName']} - {sorted_data1[count]['cityToFullName']}</a>''' \
+                             f''' Price: <b>{sorted_data1[count]['price']}</b> \n''' \
+                             f'''{sorted_data1[count]['date']} -  {sorted_data1[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
     print(list_of_flights)
+    sorted_data.clear()
     return list_of_flights
 
 
-# x = get_data_by_default_parameters()
-# y = init_search_parameters('krakow', 'gdansk')
-# print(y)
-# init_search_parameters('krakow', 'berlin')
+
 
 

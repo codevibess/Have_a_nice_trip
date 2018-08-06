@@ -8,24 +8,23 @@ from kiwi_controller import *
 import logging
 
 import collections
+
 # log into console - very helpful  stuff
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-
+# logging.basicConfig(level=logging.DEBUG,
+#                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 class TelegramBot():
     # variable question needed for iteraction with a user & give additional
     # info how to search throw bot
-    parameters_for_user_search = []
-    result_of_search = []
+
     questions = ['city', 'city_to', 'data_f', 'data_t', 'passengers']
 
     def __init__(self):
         #  staff needed for start bot and register in telegram bot system
         self.updater = Updater(TELEGRAM_TOKEN)
-
+        self.parameters_for_user_search = []
+        self.result_of_search = []
         #  help to send message periodically,with  set intervals for messsaging
         # e.t.c . It runs asynchronously in a separate thread.
         job_q = self.updater.job_queue
@@ -33,10 +32,10 @@ class TelegramBot():
         self.updater.dispatcher.add_handler(CommandHandler('search', self.handle_search))
         self.single_question = self.get_a_single_question()
 
-
     def start(self):
         self.updater.start_polling()
         self.updater.idle()
+
     # functions
 
     def create_handler_for_search(self):
@@ -46,31 +45,34 @@ class TelegramBot():
     def delete_search_handler(self):
         self.updater.dispatcher.remove_handler(self.handler)
 
-
     def get_a_single_question(self):
         yield from self.questions
 
-
-
     def iterate_through_questions(self, bot, update):
-        # global single_question
+        global sorted_data
         # global result_of_search
         try:
             question = next(self.single_question)
 
         except:
-            single_question = self.get_a_single_question()
-            print("-------------------" + str(self.parameters_for_user_search))
-            # result_of_search = unpack_data(init_search_parameters(self.parameters_for_user_search[1], self.parameters_for_user_search[2]))
-            self.result_of_search = init_search_parameters(self.parameters_for_user_search[1], self.parameters_for_user_search[2])
-            print(self.result_of_search)
-            self.send_updates_for_users(bot, update)
-            self.result_of_search.clear()
-            self.parameters_for_user_search.clear()  # empty list for futher use
             self.single_question = self.get_a_single_question()
-            self.delete_search_handler()
+            print("-------------------" + str(self.parameters_for_user_search))
 
-            print("dsdssd" + " ".join(self.result_of_search))
+            self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
+                                                           self.parameters_for_user_search[2])
+
+            # print("-------------------" +  str(self.result_of_search))
+            try:
+                self.send_updates_for_users(bot, update)
+            except:
+                print("____________________ERROR IN SEND MESSAGE____________________")
+            finally:
+                self.result_of_search = []
+                self.parameters_for_user_search = [] # empty list for futher use
+                sorted_data = []
+                self.delete_search_handler()
+
+            # print("00000000000000000000" + str(self.result_of_search))
             return
         return question
 
@@ -90,6 +92,14 @@ class TelegramBot():
         # updater.dispatcher.remove_handler(handler)
         self.search(bot, update)
 
+
+
+
+
+
+
+
+
     def send_updates_for_users(self, bot, job):
         couter = 25
         prev_counter = 0
@@ -105,9 +115,10 @@ class TelegramBot():
 
 
 
+
+
+
 # my_updates_sender = job_q.run_repeating(search, interval=90, first=0)
-
-
 if __name__ == "__main__":
     t = TelegramBot()
     t.start()
