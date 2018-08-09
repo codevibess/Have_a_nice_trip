@@ -38,6 +38,12 @@ class TelegramBot():
         self.updater.start_polling()
         self.updater.idle()
 
+    def cleanup_variables(self):
+        self.result_of_search = []
+        self.parameters_for_user_search = []  # empty list for futher use
+        self.delete_search_handler()
+
+
     # functions
 
     def create_handler_for_search(self):
@@ -67,9 +73,8 @@ class TelegramBot():
                                                            self.parameters_for_user_search[5]
                                                            )
             except:
-                self.result_of_search = []
-                self.parameters_for_user_search = []  # empty list for futher use
-                self.delete_search_handler()
+                self.cleanup_variables()
+
 
 
             try:
@@ -77,9 +82,7 @@ class TelegramBot():
             except:
                 print("____________________ERROR IN SEND MESSAGE____________________")
             finally:
-                self.result_of_search = []
-                self.parameters_for_user_search = []  # empty list for futher use
-                self.delete_search_handler()
+                self.cleanup_variables()
             return
         return question
 
