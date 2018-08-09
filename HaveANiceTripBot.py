@@ -1,4 +1,5 @@
 # telegram dependencies
+# -*- coding: utf-8 -*-
 from telegram.ext import Updater, CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
@@ -19,7 +20,7 @@ class TelegramBot():
     # variable question needed for iteraction with a user & give additional
     # info how to search throw bot
 
-    questions = ['Вкажіть пункт відправлення. Вживайте лише англійські назви міст (наприклад: kiev).', 'Тепер вкажіть місто прибуття Вживайте лише англійські назви міст (наприклад: kiev)..', 'data_f', 'data_t', 'passengers']
+    questions = ['Вкажіть пункт відправлення.Вживайте лише англійські назви міст без спеціальних знаків (наприклад: Krakow).', 'Тепер вкажіть місто прибуття. Вживайте лише англійські назви міст без спеціальних знаків(наприклад: Kiev).', 'Хороший вибір! Тепер вкажіть від якої дати шукати  в форматі 10/09/2018', ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2']
 
     def __init__(self):
         #  staff needed for start bot and register in telegram bot system
@@ -58,14 +59,17 @@ class TelegramBot():
         except:
             self.single_question = self.get_a_single_question()
             print("-------------------" + str(self.parameters_for_user_search))
-
-            self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
+            try:
+                self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
                                                            self.parameters_for_user_search[2],
-
-                                                           # self.parameters_for_user_search[3],
-                                                           # self.parameters_for_user_search[4],
-                                                           # self.parameters_for_user_search[5]
+                                                           self.parameters_for_user_search[3],
+                                                           self.parameters_for_user_search[4],
+                                                           self.parameters_for_user_search[5]
                                                            )
+            except:
+                self.result_of_search = []
+                self.parameters_for_user_search = []  # empty list for futher use
+                self.delete_search_handler()
 
 
             try:
