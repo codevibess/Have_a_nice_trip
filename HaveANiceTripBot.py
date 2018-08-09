@@ -3,6 +3,8 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
+from threading import Thread
+
 # import my controller script and additional packadfe for logging to console
 from kiwi_controller import *
 # from model.questions import *
@@ -43,7 +45,6 @@ class TelegramBot():
         self.parameters_for_user_search = []  # empty list for futher use
         self.delete_search_handler()
 
-
     # functions
 
     def create_handler_for_search(self):
@@ -68,13 +69,12 @@ class TelegramBot():
             try:
                 self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
                                                            self.parameters_for_user_search[2],
-                                                           self.parameters_for_user_search[3],
-                                                           self.parameters_for_user_search[4],
-                                                           self.parameters_for_user_search[5]
+                                                           # self.parameters_for_user_search[3],
+                                                           # self.parameters_for_user_search[4],
+                                                           # self.parameters_for_user_search[5]
                                                            )
             except:
                 self.cleanup_variables()
-
 
 
             try:
@@ -91,7 +91,7 @@ class TelegramBot():
 
         message_for_user = self.iterate_through_questions(bot, update)
         try:
-            bot.send_message(chat_id=CHAT_ID,
+            bot.send_message(chat_id=update.message.chat_id,
                              text=message_for_user)
         except:
             return
@@ -103,17 +103,18 @@ class TelegramBot():
         # updater.dispatcher.remove_handler(handler)
         self.search(bot, update)
 
-    def send_updates_for_users(self, bot, job):
+    def send_updates_for_users(self, bot, update):
         couter = 25
         prev_counter = 0
+        print(update.message.chat_id, CHAT_ID)
         for it in range(0, int(len(self.result_of_search) / couter) + 1):
             if len(self.result_of_search) >= 25:
-                bot.send_message(parse_mode='HTML', chat_id=CHAT_ID,
+                bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
                                  text=f'''{''.join(self.result_of_search[prev_counter:couter])}''')
                 prev_counter = couter
                 couter *= 2
             else:
-                bot.send_message(parse_mode='HTML', chat_id=CHAT_ID,
+                bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
                                  text=f'''{''.join(self.result_of_search[1:10])}''')
 
 

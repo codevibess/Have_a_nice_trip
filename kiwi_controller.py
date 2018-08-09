@@ -20,7 +20,7 @@ date_to = '08/12/2018'
 days_in_destination_from = '2'
 days_in_destination_to = '4'
 price_from = '0'
-price_to = '52'
+price_to = '50'
 
 
 booking_tokens = []
@@ -35,16 +35,6 @@ def create_link(city_from, city_to, date):
 #  get all data from kiwi api
 def get_data_from_kiwi_url():
     with urllib.request.urlopen(
-
-            # SEARCH_ENGINE + f"?flyFrom={fly_from}"
-            #                 f"&to={fly_to}"
-            #                 f"&typeFlight=return"
-            #                 f"&daysInDestinationFrom={days_in_destination_from}"
-            #                 f"&daysInDestinationTo={days_in_destination_to}"
-            #                 f"&price_from={price_from}"
-            #                 f"&price_to={price_to}"
-            #                 f"&dateFrom={date_from}"
-            #                 f"&dateTo={date_to}"
          SEARCH_ENGINE + f"?flyFrom={fly_from}"
                          f"&to={fly_to}"
                          f"&typeFlight=return"
