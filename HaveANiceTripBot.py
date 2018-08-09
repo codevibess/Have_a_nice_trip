@@ -61,11 +61,12 @@ class TelegramBot():
 
             self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
                                                            self.parameters_for_user_search[2],
+
                                                            # self.parameters_for_user_search[3],
                                                            # self.parameters_for_user_search[4],
                                                            # self.parameters_for_user_search[5]
                                                            )
-            self.result_of_search = get_data_by_default_parameters()
+
 
             try:
                 self.send_updates_for_users(bot, update)

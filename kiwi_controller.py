@@ -35,6 +35,7 @@ def create_link(city_from, city_to, date):
 #  get all data from kiwi api
 def get_data_from_kiwi_url():
     with urllib.request.urlopen(
+
             # SEARCH_ENGINE + f"?flyFrom={fly_from}"
             #                 f"&to={fly_to}"
             #                 f"&typeFlight=return"
@@ -56,14 +57,18 @@ def get_data_from_kiwi_url():
 
 
     ) as url:
-        print(SEARCH_ENGINE + f"""?flyFrom={fly_from}"
-                              f"&to={fly_to}"
-                              f"&typeFlight=return"
-                              f"&daysInDestinationFrom={days_in_destination_from}"
-                              f"&daysInDestinationTo={days_in_destination_to}"
-                              f"&price_from={price_from}"
-                              f"&price_to={price_to}"
-                              f"&price_from={price_from}"""
+        print(
+
+            SEARCH_ENGINE + f"?flyFrom={fly_from}"
+                            f"&to={fly_to}"
+                            f"&typeFlight=return"
+                            f"&daysInDestinationFrom={days_in_destination_from}"
+                            f"&daysInDestinationTo={days_in_destination_to}"
+                            f"&price_from={price_from}"
+                            f"&price_to={price_to}"
+                            f"&dateFrom={date_from}"
+                            f"&dateTo={date_to}"
+
                               )
 
         global data_from_kiwi_url
@@ -118,6 +123,7 @@ def get_data_by_default_parameters():
     get_data_from_kiwi_url()
     sort_useful_data()
     print(sorted_data)
+
     print(check_flights(booking_tokens[0]))
     db.child("tripsletter").push(sorted_data)
     return unpack_data()
@@ -169,5 +175,3 @@ def unpack_data():
     sorted_data.clear()
     return list_of_flights
 
-
-# get_data_by_default_parameters()
