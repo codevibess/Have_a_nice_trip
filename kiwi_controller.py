@@ -13,14 +13,15 @@ sorted_data = []
 
 #  variable needed for search in api
 fly_from = 'krakow'
-fly_to = ''
+fly_to = 'berlin'
 number_of_passengers = '2'
-date_from = ''
-date_to = ''
+date_from = '08/08/2018'
+date_to = '08/12/2018'
 days_in_destination_from = '2'
 days_in_destination_to = '4'
 price_from = '0'
 price_to = '52'
+
 
 booking_tokens = []
 
@@ -34,21 +35,36 @@ def create_link(city_from, city_to, date):
 #  get all data from kiwi api
 def get_data_from_kiwi_url():
     with urllib.request.urlopen(
-            SEARCH_ENGINE + f"?flyFrom={fly_from}"
-                            f"&to={fly_to}"
-                            f"&typeFlight=return"
-                            f"&daysInDestinationFrom={days_in_destination_from}"
-                            f"&daysInDestinationTo={days_in_destination_to}"
-                            f"&price_from={price_from}"
-                            f"&price_to={price_to}"
+            # SEARCH_ENGINE + f"?flyFrom={fly_from}"
+            #                 f"&to={fly_to}"
+            #                 f"&typeFlight=return"
+            #                 f"&daysInDestinationFrom={days_in_destination_from}"
+            #                 f"&daysInDestinationTo={days_in_destination_to}"
+            #                 f"&price_from={price_from}"
+            #                 f"&price_to={price_to}"
+            #                 f"&dateFrom={date_from}"
+            #                 f"&dateTo={date_to}"
+         SEARCH_ENGINE + f"?flyFrom={fly_from}"
+                         f"&to={fly_to}"
+                         f"&typeFlight=return"
+                         f"&daysInDestinationFrom={days_in_destination_from}"
+                         f"&daysInDestinationTo={days_in_destination_to}"
+                         f"&price_from={price_from}"
+                         f"&price_to={price_to}&"
+                         f"dateFrom={date_from}"
+                         f"&dateTo={date_to}"
+
+
     ) as url:
-        print( SEARCH_ENGINE + f"?flyFrom={fly_from}"
-                            f"&to={fly_to}"
-                            f"&typeFlight=return"
-                            f"&daysInDestinationFrom={days_in_destination_from}"
-                            f"&daysInDestinationTo={days_in_destination_to}"
-                            f"&price_from={price_from}"
-                            f"&price_to={price_to}")
+        print(SEARCH_ENGINE + f"""?flyFrom={fly_from}"
+                              f"&to={fly_to}"
+                              f"&typeFlight=return"
+                              f"&daysInDestinationFrom={days_in_destination_from}"
+                              f"&daysInDestinationTo={days_in_destination_to}"
+                              f"&price_from={price_from}"
+                              f"&price_to={price_to}"
+                              f"&price_from={price_from}"""
+                              )
 
         global data_from_kiwi_url
         global all_flights
@@ -102,12 +118,12 @@ def get_data_by_default_parameters():
     get_data_from_kiwi_url()
     sort_useful_data()
     print(sorted_data)
-    check_flights(booking_tokens[0])
+    print(check_flights(booking_tokens[0]))
     db.child("tripsletter").push(sorted_data)
-    return unpack_data(sorted_data)
+    return unpack_data()
 
 
-def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="", passengers="1",
+def init_search_parameters(city_from="krakow", city_to="", date_f="08/08/2018", date_t="20/12/2018", passengers="1",
                            days_in_destination_f='2',
                            days_in_destination_t='4', price_t='60'):
     ''' Function which init global parameters for user search '''
@@ -126,10 +142,10 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="", date_t="",
     sort_useful_data()
     # print(sorted_data)
     # call check flights for more information about single flight ex. number of seats, bags fee
-
+    print(check_flights(booking_tokens[0]))
     # put into firebase data
     db.child("users_search").push(sorted_data)
-    return unpack_data(sorted_data)
+    return unpack_data()
 
 
 def get_data_from_db():
@@ -139,20 +155,19 @@ def get_data_from_db():
         result.append(user.val())
     return result
 
-def unpack_data(arg):
+
+def unpack_data():
     global sorted_data
-    sorted_data1 = arg
+
     list_of_flights = []
-    for count, trip in enumerate(sorted_data1):
-        data_for_telegram = f''' <a href="{sorted_data1[count]['link']}">{sorted_data1[count]['cityFromFullName']} - {sorted_data1[count]['cityToFullName']}</a>''' \
-                             f''' Price: <b>{sorted_data1[count]['price']}</b> \n''' \
-                             f'''{sorted_data1[count]['date']} -  {sorted_data1[count]['return_date']}  \n'''
+    for count, trip in enumerate(sorted_data):
+        data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>''' \
+                            f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
+                            f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
-    print(list_of_flights)
+    # print(list_of_flights)
     sorted_data.clear()
     return list_of_flights
 
 
-
-
-
+# get_data_by_default_parameters()
