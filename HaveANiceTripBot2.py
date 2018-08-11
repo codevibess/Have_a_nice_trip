@@ -17,7 +17,7 @@ questions = [
     'Хороший вибір! Тепер вкажіть від якої дати шукати  в форматі 10/09/2018',
     ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2']
 
-
+single_question = ""
 
 def get_a_single_question():
     """ return single question in  generator type """
@@ -28,7 +28,7 @@ def init():
     single_question_generator = get_a_single_question()
     return single_question_generator
 
-single_question = init()
+
 
 def reset_questions():
     """reset single question when StopIteration exception appear"""
@@ -52,13 +52,14 @@ def handle_search(bot, update):
         """Here we set handler to all text masseges and for invoke
         search command """
         global handler
-
+        global single_question
+        single_question = init()
         updater.dispatcher.add_handler(handler)
         search(bot, update)
 
 
 
-
+#  define a handler for search commmand
 handler = MessageHandler(Filters.text | Filters.command, search)
 
 
