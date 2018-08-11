@@ -17,7 +17,7 @@ questions = [
 
 single_question = ""
 user_search = ""
-number = 0
+
 
 
 
@@ -48,19 +48,16 @@ def reset_questions():
 
 def search(bot, update, chat_data):
     global handler
-    global number
+
     try:
-        chat_data[f'{number}'] = update.message.text
         next_question = next(single_question)
-        number += 1
+        chat_data[f'{next_question}'] = update.message.text
         print(chat_data)
-        print(update)
         bot.send_message(chat_id=update.message.chat_id,
                      text=next_question)
     except:
         reset_questions()
         chat_data.clear()
-        number=0
         updater.dispatcher.remove_handler(handler)
 
 
@@ -71,7 +68,7 @@ def handle_search(bot, update, chat_data):
         global handler
         global single_question
         global number
-        number = 0
+
         single_question = init()
         updater.dispatcher.add_handler(handler)
         search(bot, update, chat_data)
