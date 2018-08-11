@@ -1,12 +1,9 @@
 from telegram.ext import Updater, CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
-
-
 from kiwi_controller import *
-
 import logging
-
+from threading import Thread
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -18,6 +15,16 @@ questions = [
     ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2']
 
 single_question = ""
+user_search = ""
+parameters_for_user_search = ""
+
+class UserSearch:
+    # parameters_for_user_search = []
+    pass
+
+
+
+
 
 def get_a_single_question():
     """ return single question in  generator type """
@@ -25,42 +32,58 @@ def get_a_single_question():
 
 def init():
     """declare generator variable"""
+
     single_question_generator = get_a_single_question()
     return single_question_generator
 
-
-
 def reset_questions():
     """reset single question when StopIteration exception appear"""
-    global single_question
+    global single_question,user_search
+    global parameters_for_user_search
+    user_search = UserSearch()
+    user_search.parameters_for_user_search = []
     single_question = init()
+    del user_search
 
 
 
-def search(bot, update):
+
+
+
+
+def search(bot, update, chat_data):
     global handler
-    try:
+    global parameters_for_user_search,user_search
 
-        print(update.message.text)
+    user_search.parameters_for_user_search.append(update.message.text)
+    print(user_search.parameters_for_user_search,user_search)
+    try:
+        next_question = next(single_question)
+        chat_data[f'{next_question}'] = update.message.text
+        print(chat_data)
         bot.send_message(chat_id=update.message.chat_id,
-                     text=next(single_question))
+                     text=next_question)
     except:
         reset_questions()
         updater.dispatcher.remove_handler(handler)
 
-def handle_search(bot, update):
+
+
+def handle_search(bot, update, chat_data):
         """Here we set handler to all text masseges and for invoke
         search command """
         global handler
-        global single_question
+        global single_question,user_search
         single_question = init()
         updater.dispatcher.add_handler(handler)
-        search(bot, update)
+        user_search = UserSearch()
+        user_search.parameters_for_user_search = []
+        search(bot, update, chat_data)
 
 
 
 #  define a handler for search commmand
-handler = MessageHandler(Filters.text | Filters.command, search)
+handler = MessageHandler(Filters.text | Filters.command, search, pass_chat_data=True)
 
 
 
@@ -72,7 +95,7 @@ handler = MessageHandler(Filters.text | Filters.command, search)
 
 updater = Updater(TELEGRAM_TOKEN)
 
-updater.dispatcher.add_handler(CommandHandler('search', handle_search))
+updater.dispatcher.add_handler(CommandHandler('search', handle_search, pass_chat_data=True))
 
 updater.start_polling()
 updater.idle()
