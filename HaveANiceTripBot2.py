@@ -9,19 +9,10 @@ from threading import Thread
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-questions = [
-    'Вкажіть пункт відправлення.Вживайте лише англійські назви міст без спеціальних знаків (наприклад: Krakow).',
-    'Тепер вкажіть місто прибуття. Вживайте лише англійські назви міст без спеціальних знаків(наприклад: Kiev).',
-    'Хороший вибір! Тепер вкажіть від якої дати шукати  в форматі 10/09/2018',
-    ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2',
-    'Кінець питань']
+
 
 single_question = ""
 user_search = ""
-
-
-
-
 
 
 
@@ -34,10 +25,11 @@ def init():
     single_question_generator = get_a_single_question()
     return single_question_generator
 
-def reset_questions():
+def reset_questions_and_remove_search_handler():
     """reset single question when StopIteration exception appear"""
     global single_question
     single_question = init()
+    updater.dispatcher.remove_handler(handler)
 
 
 
@@ -52,6 +44,7 @@ def search(bot, update, chat_data):
 
     try:
         next_question = next(single_question)
+
         chat_data[f'{next_question}'] = update.message.text
         print(chat_data)
         print(chat_data[f'{CITY_FROM}'])
@@ -66,9 +59,9 @@ def search(bot, update, chat_data):
         )
         print(result_of_user_search)
         send_updates_for_users(result_of_user_search,bot, update)
-        reset_questions()
+        reset_questions_and_remove_search_handler()
         chat_data.clear()
-        updater.dispatcher.remove_handler(handler)
+
 
 
 
@@ -77,7 +70,6 @@ def handle_search(bot, update, chat_data):
         search command """
         global handler
         global single_question
-        global number
 
         single_question = init()
         updater.dispatcher.add_handler(handler)
