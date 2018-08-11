@@ -12,17 +12,28 @@ import logging
 
 import collections
 
-
 # log into console - very helpful  stuff
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+
+class Test():
+    parameters_for_user_search = []
+
+
+
+
 
 
 class TelegramBot():
     # variable question needed for iteraction with a user & give additional
     # info how to search throw bot
 
-    questions = ['Вкажіть пункт відправлення.Вживайте лише англійські назви міст без спеціальних знаків (наприклад: Krakow).', 'Тепер вкажіть місто прибуття. Вживайте лише англійські назви міст без спеціальних знаків(наприклад: Kiev).', 'Хороший вибір! Тепер вкажіть від якої дати шукати  в форматі 10/09/2018', ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2']
+    questions = [
+        'Вкажіть пункт відправлення.Вживайте лише англійські назви міст без спеціальних знаків (наприклад: Krakow).',
+        'Тепер вкажіть місто прибуття. Вживайте лише англійські назви міст без спеціальних знаків(наприклад: Kiev).',
+        'Хороший вибір! Тепер вкажіть від якої дати шукати  в форматі 10/09/2018',
+        ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2']
 
     def __init__(self):
         #  staff needed for start bot and register in telegram bot system
@@ -34,7 +45,6 @@ class TelegramBot():
         job_q = self.updater.job_queue
 
         self.updater.dispatcher.add_handler(CommandHandler('search', self.handle_search))
-        self.single_question = self.get_a_single_question()
 
     def start(self):
         self.updater.start_polling()
@@ -57,25 +67,30 @@ class TelegramBot():
     def get_a_single_question(self):
         yield from self.questions
 
-    def iterate_through_questions(self, bot, update):
+    def iterate_through_questions(self, bot, update, parameters_for_user_searc):
         global sorted_data
         # global result_of_search
+
+        parameters_for_user_search = parameters_for_user_searc
+        parameters_for_user_search.append("") if update.message.text == '-' else parameters_for_user_search.append(
+            update.message.text)
         try:
             question = next(self.single_question)
+
 
         except:
             self.single_question = self.get_a_single_question()
             print("-------------------" + str(self.parameters_for_user_search))
             try:
-                self.result_of_search = init_search_parameters(self.parameters_for_user_search[1],
-                                                           self.parameters_for_user_search[2],
-                                                           # self.parameters_for_user_search[3],
-                                                           # self.parameters_for_user_search[4],
-                                                           # self.parameters_for_user_search[5]
-                                                           )
+                self.result_of_search = init_search_parameters(parameters_for_user_search[1],
+                                                               parameters_for_user_search[2],
+                                                               # self.parameters_for_user_search[3],
+                                                               # self.parameters_for_user_search[4],
+                                                               # self.parameters_for_user_search[5]
+                                                               )
             except:
                 self.cleanup_variables()
-
+                parameters_for_user_search = []
 
             try:
                 self.send_updates_for_users(bot, update)
@@ -86,10 +101,8 @@ class TelegramBot():
             return
         return question
 
-    def search(self, bot, update):
-        self.parameters_for_user_search.append("") if update.message.text == '-' else self.parameters_for_user_search.append(update.message.text)
-
-        message_for_user = self.iterate_through_questions(bot, update)
+    def search(self, bot, update, a=[]):
+        message_for_user = self.iterate_through_questions(bot, update, a)
         try:
             bot.send_message(chat_id=update.message.chat_id,
                              text=message_for_user)
@@ -101,6 +114,8 @@ class TelegramBot():
         search command """
         self.create_handler_for_search()
         # updater.dispatcher.remove_handler(handler)
+
+        self.single_question = self.get_a_single_question()
         self.search(bot, update)
 
     def send_updates_for_users(self, bot, update):
