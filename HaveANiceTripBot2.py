@@ -39,12 +39,19 @@ def reset_questions():
 
 def search(bot, update):
     try:
+
+        print(update.message.text)
         bot.send_message(chat_id=update.message.chat_id,
                      text=next(single_question))
     except:
         reset_questions()
 
-
+def handle_search(bot, update):
+        """Here we set handler to all text masseges and for invoke
+        search command """
+        handler = MessageHandler(Filters.text | Filters.command, search)
+        updater.dispatcher.add_handler(handler)
+        search(bot, update)
 
 
 
@@ -61,7 +68,7 @@ def search(bot, update):
 
 updater = Updater(TELEGRAM_TOKEN)
 
-updater.dispatcher.add_handler(CommandHandler('search', search))
+updater.dispatcher.add_handler(CommandHandler('search', handle_search))
 
 updater.start_polling()
 updater.idle()
