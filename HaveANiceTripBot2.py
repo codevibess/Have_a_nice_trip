@@ -51,6 +51,8 @@ def search(bot, update, chat_data):
         bot.send_message(chat_id=update.message.chat_id,
                      text=next_question)
     except:
+        bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
+                         text=f'''Ок, дайте мені кілька секунд 🔎''')
         result_of_user_search = init_search_parameters(chat_data[f'{CITY_TO}'],
                                                        chat_data[f'{DATA_FROM}'],
                                                        # chat_data[f'{DATA_FROM}'],
@@ -59,9 +61,19 @@ def search(bot, update, chat_data):
         )
         print(result_of_user_search)
         try:
+            if result_of_user_search == None:
+                bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
+                                 text=f'''На жаль ти ввів хибні параметри, перевір їх правильність та попробуй ще раз, поки я не пішов дрімати 🙊 ''')
+
+                return
+            if len(result_of_user_search) == 0:
+                bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
+                                 text=f'''Пробач, але за такими пераметрами мені не вдалось нічого знайти :( Запамятай головне не куди, а з ким! 😉''')
+                return
             send_updates_for_users(result_of_user_search,bot, update)
         except:
             print("BAD REQUEST")
+
         finally:
             reset_questions_and_remove_search_handler()
             reset()
@@ -83,13 +95,19 @@ def handle_search(bot, update, chat_data):
 
 
 def check(bot, update):
+    bot.send_message(parse_mode='Markdown',chat_id=update.message.chat_id,
+                     text=f'''Привіт *{update.message.chat.first_name}* маю для тебе щось цікаве🔥 За хвильку вишлю тобі кілька  *lowcost* напрямків для *вдалих* подорожей 🗽 ''')
+    print(update.message.chat.first_name)
     low_cost_result = get_data_by_default_parameters()
-
     send_updates_for_users(low_cost_result,bot, update)
+    bot.send_message(chat_id=update.message.chat_id,
+                     text=f'''В ціну входить квиток туди й назад.Ціна вказана для 1 особи.Надішли мені вподобайку якщо я тобі вгодив ♥''')
+
 
 def send_updates_for_users(result_of_search, bot, update):
         couter = 25
         prev_counter = 0
+
 
         for it in range(0, int(len(result_of_search) / couter) + 1):
             if len(result_of_search) >= 25:

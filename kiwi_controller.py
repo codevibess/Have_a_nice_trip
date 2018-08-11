@@ -67,6 +67,7 @@ def get_data_from_kiwi_url():
         all_flights = data_from_kiwi_url['data']
 
 
+
 def sort_useful_data():
     global convert_date
     for counter, key in enumerate(range(0, len(all_flights))):
@@ -121,7 +122,7 @@ def get_data_by_default_parameters():
 
 def init_search_parameters(city_from="krakow", city_to="", date_f="08/08/2018", date_t="20/12/2018", passengers="1",
                            days_in_destination_f='2',
-                           days_in_destination_t='4', price_t='60'):
+                           days_in_destination_t='4', price_t='10'):
     ''' Function which init global parameters for user search '''
     global fly_from, fly_to, number_of_passengers
     global date_from, date_to
@@ -156,9 +157,11 @@ def unpack_data():
     global sorted_data
 
     list_of_flights = []
+    if len(data_from_kiwi_url['hashtags']) == 0:
+        return None
     for count, trip in enumerate(sorted_data):
         data_for_telegram = f''' <a href="{sorted_data[count]['link']}">{sorted_data[count]['cityFromFullName']} - {sorted_data[count]['cityToFullName']}</a>''' \
-                            f''' Price: <b>{sorted_data[count]['price']}</b> \n''' \
+                            f''' Price: <b>{sorted_data[count]['price']} €</b> \n''' \
                             f'''{sorted_data[count]['date']} -  {sorted_data[count]['return_date']}  \n'''
         list_of_flights.append(data_for_telegram)
     # print(list_of_flights)
