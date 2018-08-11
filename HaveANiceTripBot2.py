@@ -38,6 +38,7 @@ def reset_questions():
 
 
 def search(bot, update):
+    global handler
     try:
 
         print(update.message.text)
@@ -45,18 +46,20 @@ def search(bot, update):
                      text=next(single_question))
     except:
         reset_questions()
+        updater.dispatcher.remove_handler(handler)
 
 def handle_search(bot, update):
         """Here we set handler to all text masseges and for invoke
         search command """
-        handler = MessageHandler(Filters.text | Filters.command, search)
+        global handler
+
         updater.dispatcher.add_handler(handler)
         search(bot, update)
 
 
 
 
-
+handler = MessageHandler(Filters.text | Filters.command, search)
 
 
 
