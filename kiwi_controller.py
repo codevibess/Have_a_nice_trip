@@ -122,7 +122,7 @@ def get_data_by_default_parameters():
 
 def init_search_parameters(city_from="krakow", city_to="", date_f="08/08/2018", date_t="20/12/2018", passengers="1",
                            days_in_destination_f='2',
-                           days_in_destination_t='4', price_t='10'):
+                           days_in_destination_t='4', price_t='70'):
     ''' Function which init global parameters for user search '''
     global fly_from, fly_to, number_of_passengers
     global date_from, date_to
@@ -179,6 +179,6 @@ def reset():
     date_to = '08/12/2018'
     days_in_destination_from = '2'
     days_in_destination_to = '4'
-    price_to = '50'
+    price_to = '80'
 
 

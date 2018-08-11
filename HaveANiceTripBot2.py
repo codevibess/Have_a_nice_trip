@@ -9,34 +9,26 @@ from threading import Thread
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-
-
 single_question = ""
 user_search = ""
-
 
 
 def get_a_single_question():
     """ return single question in  generator type """
     yield from questions
 
+
 def init():
     """declare generator variable"""
     single_question_generator = get_a_single_question()
     return single_question_generator
+
 
 def reset_questions_and_remove_search_handler():
     """reset single question when StopIteration exception appear"""
     global single_question
     single_question = init()
     updater.dispatcher.remove_handler(handler)
-
-
-
-
-
-
-
 
 
 def search(bot, update, chat_data):
@@ -48,8 +40,11 @@ def search(bot, update, chat_data):
         chat_data[f'{next_question}'] = update.message.text
         print(chat_data)
         print(chat_data[f'{CITY_FROM}'])
+        if next_question == 'Кінець питань':
+            raise StopIteration
+
         bot.send_message(chat_id=update.message.chat_id,
-                     text=next_question)
+                         text=next_question)
     except:
         bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
                          text=f'''Ок, дайте мені кілька секунд 🔎''')
@@ -58,7 +53,7 @@ def search(bot, update, chat_data):
                                                        # chat_data[f'{DATA_FROM}'],
                                                        # chat_data[f'{DATA_TO}']
 
-        )
+                                                       )
         print(result_of_user_search)
         try:
             if result_of_user_search == None:
@@ -70,7 +65,7 @@ def search(bot, update, chat_data):
                 bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
                                  text=f'''Пробач, але за такими пераметрами мені не вдалось нічого знайти :( Запамятай головне не куди, а з ким! 😉''')
                 return
-            send_updates_for_users(result_of_user_search,bot, update)
+            send_updates_for_users(result_of_user_search, bot, update)
         except:
             print("BAD REQUEST")
 
@@ -81,61 +76,58 @@ def search(bot, update, chat_data):
             chat_data.clear()
 
 
-
-
 def handle_search(bot, update, chat_data):
-        """Here we set handler to all text masseges and for invoke
-        search command """
-        global handler
-        global single_question
+    """Here we set handler to all text masseges and for invoke
+    search command """
+    global handler
+    global single_question
 
-        single_question = init()
-        updater.dispatcher.add_handler(handler)
-        search(bot, update, chat_data)
+    single_question = init()
+    updater.dispatcher.add_handler(handler)
+    search(bot, update, chat_data)
 
 
 def check(bot, update):
-    bot.send_message(parse_mode='Markdown',chat_id=update.message.chat_id,
+    bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
                      text=f'''Привіт *{update.message.chat.first_name}* маю для тебе щось цікаве🔥 За хвильку вишлю тобі кілька  *lowcost* напрямків для *вдалих* подорожей 🗽 ''')
     print(update.message.chat.first_name)
     low_cost_result = get_data_by_default_parameters()
-    send_updates_for_users(low_cost_result,bot, update)
+    send_updates_for_users(low_cost_result, bot, update)
     bot.send_message(chat_id=update.message.chat_id,
                      text=f'''В ціну входить квиток туди й назад.Ціна вказана для 1 особи.Надішли мені вподобайку якщо я тобі вгодив ♥''')
 
 
 def send_updates_for_users(result_of_search, bot, update):
-        couter = 25
-        prev_counter = 0
+    couter = 25
+    prev_counter = 0
+
+    for it in range(0, int(len(result_of_search) / couter) + 1):
+        if len(result_of_search) >= 25:
+            bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
+                             text=f'''{''.join(result_of_search[prev_counter:couter])}''')
+            prev_counter = couter
+            couter *= 2
+        else:
+            bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
+                             text=f'''{''.join(result_of_search[1:10])}''')
 
 
-        for it in range(0, int(len(result_of_search) / couter) + 1):
-            if len(result_of_search) >= 25:
-                bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
-                                 text=f'''{''.join(result_of_search[prev_counter:couter])}''')
-                prev_counter = couter
-                couter *= 2
-            else:
-                bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
-                                 text=f'''{''.join(result_of_search[1:10])}''')
-
+def start(bot, update):
+    bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
+                     text=f'''Привіт *{update.message.chat.first_name}* я бот,що заставить тебе забути про нуднуй інтернет-сьорфінг в пошуку  цікавих пропозицій для подорожей.Нижче можеш знайти команди на які я віднукуюсь
+*/search* - пошук авіабілетів за параметрами, що ти подаси
+*/check* - перевір найгарячіші та найдешевші авібіалети з міста Краків'''
+                          )
 
 
 #  define a handler for search commmand
 handler = MessageHandler(Filters.text | Filters.command, search, pass_chat_data=True)
 
-
-
-
-
-
-
-
-
 updater = Updater(TELEGRAM_TOKEN)
 
+updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('search', handle_search, pass_chat_data=True))
-updater.dispatcher.add_handler(CommandHandler('check', check))
+updater.dispatcher.add_handler(CommandHandler('check', check, pass_chat_data=True))
 
 updater.start_polling()
 updater.idle()
