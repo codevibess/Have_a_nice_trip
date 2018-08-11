@@ -2,6 +2,7 @@ from telegram.ext import Updater, CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from kiwi_controller import *
+from model.questions import *
 import logging
 from threading import Thread
 
@@ -53,9 +54,18 @@ def search(bot, update, chat_data):
         next_question = next(single_question)
         chat_data[f'{next_question}'] = update.message.text
         print(chat_data)
+        print(chat_data[f'{CITY_FROM}'])
         bot.send_message(chat_id=update.message.chat_id,
                      text=next_question)
     except:
+        result_of_user_search = init_search_parameters(chat_data[f'{CITY_TO}'],
+                                                       chat_data[f'{DATA_FROM}'],
+                                                       # chat_data[f'{DATA_FROM}'],
+                                                       # chat_data[f'{DATA_TO}']
+
+        )
+        print(result_of_user_search)
+        send_updates_for_users(result_of_user_search,bot, update)
         reset_questions()
         chat_data.clear()
         updater.dispatcher.remove_handler(handler)
@@ -72,6 +82,23 @@ def handle_search(bot, update, chat_data):
         single_question = init()
         updater.dispatcher.add_handler(handler)
         search(bot, update, chat_data)
+
+
+
+
+def send_updates_for_users(result_of_search, bot, update):
+        couter = 25
+        prev_counter = 0
+
+        for it in range(0, int(len(result_of_search) / couter) + 1):
+            if len(result_of_search) >= 25:
+                bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
+                                 text=f'''{''.join(result_of_search[prev_counter:couter])}''')
+                prev_counter = couter
+                couter *= 2
+            else:
+                bot.send_message(parse_mode='HTML', chat_id=update.message.chat_id,
+                                 text=f'''{''.join(result_of_search[1:10])}''')
 
 
 

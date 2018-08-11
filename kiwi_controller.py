@@ -114,7 +114,7 @@ def get_data_by_default_parameters():
     sort_useful_data()
     print(sorted_data)
 
-    print(check_flights(booking_tokens[0]))
+    # print(check_flights(booking_tokens[0]))
     db.child("tripsletter").push(sorted_data)
     return unpack_data()
 
@@ -138,7 +138,7 @@ def init_search_parameters(city_from="krakow", city_to="", date_f="08/08/2018", 
     sort_useful_data()
     # print(sorted_data)
     # call check flights for more information about single flight ex. number of seats, bags fee
-    print(check_flights(booking_tokens[0]))
+    # print(check_flights(booking_tokens[0]))
     # put into firebase data
     db.child("users_search").push(sorted_data)
     return unpack_data()
