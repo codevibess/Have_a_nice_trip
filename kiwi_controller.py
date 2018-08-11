@@ -13,14 +13,14 @@ sorted_data = []
 
 #  variable needed for search in api
 fly_from = 'krakow'
-fly_to = 'berlin'
+fly_to = ''
 number_of_passengers = '2'
 date_from = '08/08/2018'
 date_to = '08/12/2018'
 days_in_destination_from = '2'
 days_in_destination_to = '4'
 price_from = '0'
-price_to = '50'
+price_to = '80'
 
 
 booking_tokens = []
@@ -165,5 +165,17 @@ def unpack_data():
     sorted_data.clear()
     return list_of_flights
 
+def reset():
+    global fly_from, fly_to, number_of_passengers
+    global date_from, date_to
+    global days_in_destination_from, days_in_destination_to, price_to
+    fly_from = 'krakow'
+    fly_to = ''
+    number_of_passengers = '2'
+    date_from = '08/08/2018'
+    date_to = '08/12/2018'
+    days_in_destination_from = '2'
+    days_in_destination_to = '4'
+    price_to = '50'
 
 

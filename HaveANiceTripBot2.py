@@ -58,9 +58,15 @@ def search(bot, update, chat_data):
 
         )
         print(result_of_user_search)
-        send_updates_for_users(result_of_user_search,bot, update)
-        reset_questions_and_remove_search_handler()
-        chat_data.clear()
+        try:
+            send_updates_for_users(result_of_user_search,bot, update)
+        except:
+            print("BAD REQUEST")
+        finally:
+            reset_questions_and_remove_search_handler()
+            reset()
+            print(fly_from)
+            chat_data.clear()
 
 
 
@@ -76,7 +82,10 @@ def handle_search(bot, update, chat_data):
         search(bot, update, chat_data)
 
 
+def check(bot, update):
+    low_cost_result = get_data_by_default_parameters()
 
+    send_updates_for_users(low_cost_result,bot, update)
 
 def send_updates_for_users(result_of_search, bot, update):
         couter = 25
@@ -108,6 +117,7 @@ handler = MessageHandler(Filters.text | Filters.command, search, pass_chat_data=
 updater = Updater(TELEGRAM_TOKEN)
 
 updater.dispatcher.add_handler(CommandHandler('search', handle_search, pass_chat_data=True))
+updater.dispatcher.add_handler(CommandHandler('check', check))
 
 updater.start_polling()
 updater.idle()

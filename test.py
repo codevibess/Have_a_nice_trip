@@ -1,5 +1,4 @@
-lst1 = [1, 2, 3]
-lst2 = lst1
-del lst1[:]
-print(lst1)
-print(lst2)
+import time
+print(time.localtime().tm_hour)
+if time.localtime().tm_hour > 12:
+    print("LOL")

@@ -133,6 +133,8 @@ class TelegramBot():
                                  text=f'''{''.join(self.result_of_search[1:10])}''')
 
 
+
+
 # my_updates_sender = job_q.run_repeating(search, interval=90, first=0)
 if __name__ == "__main__":
     t = TelegramBot()
