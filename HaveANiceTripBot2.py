@@ -12,15 +12,13 @@ questions = [
     'Вкажіть пункт відправлення.Вживайте лише англійські назви міст без спеціальних знаків (наприклад: Krakow).',
     'Тепер вкажіть місто прибуття. Вживайте лише англійські назви міст без спеціальних знаків(наприклад: Kiev).',
     'Хороший вибір! Тепер вкажіть від якої дати шукати  в форматі 10/09/2018',
-    ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2']
+    ' Тепер вкажіть до якої дати шукати  в форматі 23/11/2018', 'Вкажіть кількість пасажирів. Наприклад 2',
+    'Кінець питань']
 
 single_question = ""
 user_search = ""
-parameters_for_user_search = ""
+number = 0
 
-class UserSearch:
-    # parameters_for_user_search = []
-    pass
 
 
 
@@ -32,18 +30,15 @@ def get_a_single_question():
 
 def init():
     """declare generator variable"""
-
     single_question_generator = get_a_single_question()
     return single_question_generator
 
 def reset_questions():
     """reset single question when StopIteration exception appear"""
-    global single_question,user_search
-    global parameters_for_user_search
-    user_search = UserSearch()
-    user_search.parameters_for_user_search = []
+    global single_question
     single_question = init()
-    del user_search
+
+
 
 
 
@@ -53,18 +48,19 @@ def reset_questions():
 
 def search(bot, update, chat_data):
     global handler
-    global parameters_for_user_search,user_search
-
-    user_search.parameters_for_user_search.append(update.message.text)
-    print(user_search.parameters_for_user_search,user_search)
+    global number
     try:
+        chat_data[f'{number}'] = update.message.text
         next_question = next(single_question)
-        chat_data[f'{next_question}'] = update.message.text
+        number += 1
         print(chat_data)
+        print(update)
         bot.send_message(chat_id=update.message.chat_id,
                      text=next_question)
     except:
         reset_questions()
+        chat_data.clear()
+        number=0
         updater.dispatcher.remove_handler(handler)
 
 
@@ -73,11 +69,11 @@ def handle_search(bot, update, chat_data):
         """Here we set handler to all text masseges and for invoke
         search command """
         global handler
-        global single_question,user_search
+        global single_question
+        global number
+        number = 0
         single_question = init()
         updater.dispatcher.add_handler(handler)
-        user_search = UserSearch()
-        user_search.parameters_for_user_search = []
         search(bot, update, chat_data)
 
 
