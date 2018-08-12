@@ -55,6 +55,7 @@ def search(bot, update, chat_data):
 
                                                        )
         print(result_of_user_search)
+        db.child("users_search").push(sorted_data)
         try:
             if result_of_user_search == None:
                 bot.send_message(parse_mode='Markdown', chat_id=update.message.chat_id,
@@ -92,6 +93,7 @@ def check(bot, update):
                      text=f'''Привіт *{update.message.chat.first_name}* маю для тебе щось цікаве🔥 За хвильку вишлю тобі кілька  *lowcost* напрямків для *вдалих* подорожей 🗽 ''')
     print(update.message.chat.first_name)
     low_cost_result = get_data_by_default_parameters()
+    db.child("users_search").push(sorted_data)
     send_updates_for_users(low_cost_result, bot, update)
     bot.send_message(chat_id=update.message.chat_id,
                      text=f'''В ціну входить квиток туди й назад.Ціна вказана для 1 особи.Надішли мені вподобайку якщо я тобі вгодив ♥''')
@@ -127,7 +129,7 @@ updater = Updater(TELEGRAM_TOKEN)
 
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('search', handle_search, pass_chat_data=True))
-updater.dispatcher.add_handler(CommandHandler('check', check, pass_chat_data=True))
+updater.dispatcher.add_handler(CommandHandler('check', check))
 
 updater.start_polling()
 updater.idle()
